@@ -155,16 +155,48 @@
     // --------------------------------------------------------------
     //
     // test if a specific major diagonal on this board contains a conflict
-    hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+
+
+    // receives start column index
+    hasMajorDiagonalConflictAt: function(columnIndex) {
+      // get rows
+      var arrays = this.rows();
+      var sum = 0;
+
+      for (var i = 0; i < arrays.length - 1; i++) {
+        sum += arrays[i][columnIndex + i];
+      }
+      if (sum > 1) {
+        return true;
+      }
+      return false;
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
+      var arrays = this.rows();
+      var columnNums = arrays[0].length;
+
+      for (var i = 0; i < columnNums; i++) {
+        if (this.hasMajorDiagonalConflictAt(i)) {
+          return true;
+        }
+      }
       return false; // fixme
     },
 
+    /*
+      if row n > row.length
+        return sum;
 
+      for (var i = 0; i <array.length; i++)
+        sum += array[i] + array[columnIndex + i]
+       row n, column n
+       row n+1, column n+1
+       row n+2, column n+2
+
+
+    /*
 
     // Minor Diagonals - go from top-right to bottom-left
     // --------------------------------------------------------------
