@@ -122,11 +122,30 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      return false; // fixme
+      var columnSum = 0;
+      var arrays = this.rows();
+
+      for (var i = 0; i < arrays.length; i++) {
+        columnSum += arrays[i][colIndex];
+      }
+
+      if (columnSum > 1) {
+        return true;
+      } else {
+        return false;
+      }
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
+      var arrays = this.rows();
+      var columnNums = arrays[0].length;
+
+      for (var i = 0; i < columnNums; i++) {
+        if (this.hasColConflictAt(i)) {
+          return true;
+        }
+      }
       return false; // fixme
     },
 
