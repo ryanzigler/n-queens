@@ -158,45 +158,69 @@
 
 
     // receives start column index
-    hasMajorDiagonalConflictAt: function(columnIndex) {
+    hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
       // get rows
       var arrays = this.rows();
       var sum = 0;
+      var index = majorDiagonalColumnIndexAtFirstRow;
 
-      for (var i = 0; i < arrays.length - 1; i++) {
-        sum += arrays[i][columnIndex + i];
+      // if index > 0
+      if (index > 0) {
+        // for loop while i < arrays.length
+        for (var i = 0; i < arrays.length - index; i++) {
+          sum += arrays[i][index + i];
+        }
       }
+
+      // if index === 0
+      if (index === 0) {
+        // // for loop while i < arrays.length
+        for (var j = 0; j < arrays.length; j++) {
+          sum += arrays[j][j];
+        }
+      }
+
+      // if index < 0
+      if (index < 0) {
+        // for loop while i < arrays.length
+        for (var k = 0; k < arrays.length - Math.abs(index); k++) {
+          var num = Math.abs(index);
+          sum += arrays[num + k][k];
+        }
+      }
+
       if (sum > 1) {
         return true;
+      } else {
+        return false;
       }
-      return false;
     },
+
+    // arrayCounter = 0
+    // while arrayCounter <= arrays.length
+    // sum += array[arrayCounter][columnIndex + columnCounter]
+
+    //array[0][columnIndex + 0] ... array[3][columnIndex + 3]
+    //array[1][columnIndex + 0] ... array[3][columnIndex + 3]
+
+    /*
+      [[0, 0, 0, 0], [1, 0, 0, 0], [0, 0, 0, 0], [0, 0, 1, 0]]
+
+    */
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
       var arrays = this.rows();
-      var columnNums = arrays[0].length;
-
-      for (var i = 0; i < columnNums; i++) {
+      for (var i = -(arrays.length - 1); i < arrays.length; i++) {
         if (this.hasMajorDiagonalConflictAt(i)) {
           return true;
         }
       }
-      return false; // fixme
+      return false;
     },
 
-    /*
-      if row n > row.length
-        return sum;
-
-      for (var i = 0; i <array.length; i++)
-        sum += array[i] + array[columnIndex + i]
-       row n, column n
-       row n+1, column n+1
-       row n+2, column n+2
 
 
-    /*
 
     // Minor Diagonals - go from top-right to bottom-left
     // --------------------------------------------------------------
