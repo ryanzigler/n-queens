@@ -79,77 +79,56 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      var rowSum = 0;
-      var arrays = this.rows();
-      var row = arrays[rowIndex];
-
+      var sum = 0;
+      var row = this.get(rowIndex);
       for (var i = 0; i < row.length; i++) {
-        rowSum += row[i];
+        sum += row[i];
+        if (sum > 1) {
+          return true;
+        }
       }
-      // row.forEach((index) => {
-      //   rowSum += index;
-      // });
-
-      if (rowSum > 1) {
-        return true;
-      } else {
-        return false;
-      }
+      return false;
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      var arrays = this.rows();
-      var rowSum = 0;
-
-      for (var i = 0; i < arrays.length; i++) {
+      var board = this.get('n');
+      var sum = 0;
+      for (var i = 0; i < board; i++) {
         if (this.hasRowConflictAt(i)) {
           return true;
         }
       }
       return false;
-      //   if (this.hasRowConflictAt(arrays[index])) {
-      //     return true;
-      //   }
-      // });
-      // return false;
     },
-
-
 
     // COLUMNS - run from top to bottom
     // --------------------------------------------------------------
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      var columnSum = 0;
+      var sum = 0;
       var arrays = this.rows();
 
       for (var i = 0; i < arrays.length; i++) {
-        columnSum += arrays[i][colIndex];
+        sum += arrays[i][colIndex];
+        if (sum > 1) {
+          return true;
+        }
       }
-
-      if (columnSum > 1) {
-        return true;
-      } else {
-        return false;
-      }
+      return false;
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      var arrays = this.rows();
-      var columnNums = arrays[0].length;
-
-      for (var i = 0; i < columnNums; i++) {
+      var board = this.get('n');
+      for (var i = 0; i < board; i++) {
         if (this.hasColConflictAt(i)) {
           return true;
         }
       }
-      return false; // fixme
+      return false;
     },
-
-
 
     // Major Diagonals - go from top-left to bottom-right
     // --------------------------------------------------------------
@@ -160,46 +139,47 @@
     // receives start column index
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
       // get rows
-      var arrays = this.rows();
+      var row = this.rows();
       var sum = 0;
       var index = majorDiagonalColumnIndexAtFirstRow;
-
       // if index > 0
       if (index > 0) {
-        // for loop while i < arrays.length
-        for (var i = 0; i < arrays.length - index; i++) {
-          sum += arrays[i][index + i];
+        // for loop while i < row.length
+        for (var i = 0; i < row.length - index; i++) {
+          sum += row[i][index + i];
+          if (sum > 1) {
+            return true;
+          }
         }
       }
-
       // if index === 0
       if (index === 0) {
-        // // for loop while i < arrays.length
-        for (var j = 0; j < arrays.length; j++) {
-          sum += arrays[j][j];
+        // // for loop while i < row.length
+        for (var j = 0; j < row.length; j++) {
+          sum += row[j][j];
+          if (sum > 1) {
+            return true;
+          }
         }
       }
-
       // if index < 0
       if (index < 0) {
-        // for loop while i < arrays.length
-        for (var k = 0; k < arrays.length - Math.abs(index); k++) {
+        // for loop while i < row.length
+        for (var k = 0; k < row.length - Math.abs(index); k++) {
           var num = Math.abs(index);
-          sum += arrays[num + k][k];
+          sum += row[num + k][k];
+          if (sum > 1) {
+            return true;
+          }
         }
       }
-
-      if (sum > 1) {
-        return true;
-      } else {
-        return false;
-      }
+      return false;
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      var arrays = this.rows();
-      for (var i = -(arrays.length - 1); i < arrays.length; i++) {
+      var board = this.get('n');
+      for (var i = -(board - 1); i < board; i++) {
         if (this.hasMajorDiagonalConflictAt(i)) {
           return true;
         }
@@ -207,44 +187,37 @@
       return false;
     },
 
-
-
-
     // Minor Diagonals - go from top-right to bottom-left
     // --------------------------------------------------------------
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
       // get rows
-      var arrays = this.rows();
+      var row = 0;
+      var column = minorDiagonalColumnIndexAtFirstRow;
       var sum = 0;
-      var index = minorDiagonalColumnIndexAtFirstRow;
+      var board = this.get('n');
 
-      if (index < arrays.length - 1) {
-        for (var i = 0; i < (index + 1); i++) {
-          sum += arrays[i][index - i];
-        }
-      } else if (index === arrays.length - 1) {
-        for (var i = 0; i < arrays.length - 1; i++) {
-          sum += arrays[i][index - i];
-        }
-      } else if (index > arrays.length - 1) {
-        for (var i = 0; i < ((2 * arrays.length) - index - 1); i++) {
-          sum += arrays[Math.abs(arrays.length - index - 1) + i][arrays.length - i - 1];
-        }
+      if (column >= board) {
+        row = column - board + 1;
+        column = board - 1;
       }
-
-      if (sum > 1) {
-        return true;
-      } else {
-        return false;
+      while (column >= 0 && row < board) {
+        var rowIndex = this.get(row);
+        sum += rowIndex[column];
+        if (sum > 1) {
+          return true;
+        }
+        column--;
+        row++;
       }
+      return false;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      var arrays = this.rows();
-      for (var i = 0; i < (arrays.length) * 2; i++) {
+      var board = this.get('n');
+      for (var i = 0; i < (board * 2) - 1; i++) {
         if (this.hasMinorDiagonalConflictAt(i)) {
           return true;
         }
